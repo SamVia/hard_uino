@@ -1,25 +1,23 @@
 #define LM335_PIN A3 // Pin collegato al sensore LM335
 #define Vint 1.109 // Tensione di alimentazione
-#define ADC_RESOLUTION 1024.0 // Risoluzione ADC
+#define Nb 10 // Risoluzione ADC
 #define S 0.01 
 //valori delle resistenze
-#define R2 21800 
-#define R3 9700
+#define R2 21800.0 
+#define R3 9700.0
 
 int sensorValue;
-float new_temperature;
-float temperature;
+double new_temperature;
+double temperature;
 float C_temperature;
 
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
   analogReference(INTERNAL);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
   if (Serial.available()) {
     serialEvent();
   }
@@ -33,10 +31,8 @@ void serialEvent(){
 
     //FSR*Dout/(10mV/K)*2^Nb
     //((Dout*Vint)/(2^nb*S))*(1+(R2/R3))
-    double a = Vint/ADC_RESOLUTION;
-    float b = R2/R3;
     Serial.print(" K ");
-    temperature = (sensorValue)*(a)*(1/S)*(1+(R2/R3)); // Converte il valore in tensione
+    temperature = ((sensorValue*Vint)/(pow(2.0, Nb)*S))*(1+(R2/R3));
     Serial.print(temperature);
 
     Serial.print(" Celsius ");
